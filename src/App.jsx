@@ -10,6 +10,7 @@ import pathwayImage from './assets/pathway img.jpg'
 import aboutImageOne from './assets/about img.png'
 import aboutImageTwo from './assets/about img 2.png'
 import aboutImageThree from './assets/about img 3.png'
+import achievements from './assets/Achievements -1.jpeg'
 
 const pages = [
   { id: 'home', label: 'Home' },
@@ -72,6 +73,13 @@ const coachFacts = [
   'Commonwealth Games and Asian Games representation',
 ]
 
+const sectionTargets = {
+  about: 'about-overview',
+  training: 'training-overview',
+  pathway: 'pathway-overview',
+  join: 'join-overview',
+}
+
 function getInitialPage() {
   const hash = window.location.hash.replace('#', '')
   return pages.some((page) => page.id === hash) ? hash : 'home'
@@ -89,37 +97,56 @@ function App() {
     return () => window.removeEventListener('hashchange', handleHashChange)
   }, [])
 
+  useEffect(() => {
+    if (activePage === 'home') {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+
+    const targetId = sectionTargets[activePage]
+    if (!targetId) {
+      return
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      document.getElementById(targetId)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      })
+    }, 0)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [activePage])
+
+  useEffect(() => {
+    const revealElements = document.querySelectorAll('[data-reveal]')
+    if (!revealElements.length) {
+      return undefined
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible')
+            observer.unobserve(entry.target)
+          }
+        })
+      },
+      {
+        threshold: 0.18,
+        rootMargin: '0px 0px -8% 0px',
+      },
+    )
+
+    revealElements.forEach((element) => observer.observe(element))
+
+    return () => observer.disconnect()
+  }, [])
+
   const navigate = (pageId) => {
     window.location.hash = pageId
     setActivePage(pageId)
-
-    if (pageId === 'home') {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-
-
-    if (pageId === 'about') {
-      requestAnimationFrame(() => {
-        document.getElementById('about-overview')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      })
-    }
-    if (pageId === 'training') {
-      requestAnimationFrame(() => {
-        document.getElementById('training-overview')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      })
-    }
-
-    if (pageId === 'pathway') {
-      requestAnimationFrame(() => {
-        document.getElementById('pathway-overview')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      })
-    }
-
-    if (pageId === 'join') {
-      requestAnimationFrame(() => {
-        document.getElementById('join-overview')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      })
-    }
   }
 
   return (
@@ -149,7 +176,7 @@ function App() {
 
       <main>
         <section className="hero-panel">
-          <div className="hero-copy">
+          <div className="hero-copy scroll-reveal is-visible">
             <p className="eyebrow">Faculty Boxing Initiative - Rise of the New Team</p>
             <h2>
               Building a boxing identity for the
@@ -164,12 +191,12 @@ function App() {
           </div>
 
           <div className="hero-aside">
-            <article className="glass-card impact-card">
+            <article className="glass-card impact-card scroll-reveal is-visible">
               <img className="mission-image" src={missionImage} alt="Mission training visual" />
               <p className="mini-label">Mission</p>
               <strong>Bring the spirit of boxing to the faculty and remove the barrier of distance.</strong>
             </article>
-            <article className="glass-card coach-highlight-card">
+            <article className="glass-card coach-highlight-card scroll-reveal is-visible">
               <p className="mini-label">LEGENDARY COACH</p>
               <img className="coach-highlight-image" src={coachImage} alt="Legendary boxing coach" />
              
@@ -225,7 +252,7 @@ function HomePage({ navigate }) {
   return (
     <div className="page-stack">
       <section className="section-grid">
-        <article className="content-card feature-card">
+        <article className="content-card feature-card scroll-reveal" data-reveal>
           <p className="section-tag">Why This Team Matters</p>
           <h3>Determination beats distance.</h3>
           <p>
@@ -236,7 +263,7 @@ function HomePage({ navigate }) {
           </p>
         </article>
 
-        <article className="content-card quote-card">
+        <article className="content-card quote-card scroll-reveal" data-reveal style={{ '--reveal-delay': '90ms' }}>
           <p className="section-tag">Core Message</p>
           <p className="quote-text">
             Let&apos;s build our own ring. Let&apos;s fight for our passion.
@@ -245,12 +272,21 @@ function HomePage({ navigate }) {
       </section>
 
       <section className="section-block home-training-stack">
-        <article id="training-overview" className="content-card feature-card training-preview-card">
+        <article
+          id="training-overview"
+          className="content-card feature-card training-preview-card scroll-reveal"
+          data-reveal
+        >
           <p className="section-tag">Training Card</p>
           <h4>Three training formats designed around access, repetition, and conditioning.</h4>
           <div className="training-preview-grid">
-            {schedule.map((item) => (
-              <article key={item.title} className="content-card schedule-card">
+            {schedule.map((item, index) => (
+              <article
+                key={item.title}
+                className="content-card schedule-card scroll-reveal"
+                data-reveal
+                style={{ '--reveal-delay': `${index * 80}ms` }}
+              >
                 <p className="mini-label">{item.title}</p>
                 <h4>{item.days}</h4>
                 <p>{item.time}</p>
@@ -277,26 +313,40 @@ function HomePage({ navigate }) {
           </p>
         </article>
 
-        <article id="pathway-overview" className="content-card pathway-preview-card">
+        <article
+          id="pathway-overview"
+          className="content-card pathway-preview-card scroll-reveal"
+          data-reveal
+        >
           <p className="section-tag">Pathway </p>
           <h4>YOUR GOALS</h4>
           <img className="pathway-image" src={pathwayImage} alt="Pathway goals visual" />
           <div className="pathway-goals-row">
-            {goals.map((goal) => (
-              <article key={goal} className="pathway-goal-chip">
+            {goals.map((goal, index) => (
+              <article
+                key={goal}
+                className="pathway-goal-chip scroll-reveal"
+                data-reveal
+                style={{ '--reveal-delay': `${index * 60}ms` }}
+              >
                 <span>{goal}</span>
               </article>
             ))}
           </div>
         </article>
 
-        <article id="about-overview" className="content-card action-card home-next-card">
+        <article
+          id="about-overview"
+          className="content-card action-card home-next-card scroll-reveal"
+          data-reveal
+        >
           <p className="section-tag">About</p>
           <h4>From proposal to identity: a boxing team rooted in FOT.</h4>
           <div className="about-image-row">
             <img className="about-card-image" src={aboutImageOne} alt="About initiative visual 1" />
             <img className="about-card-image" src={aboutImageTwo} alt="About initiative visual 2" />
             <img className="about-card-image" src={aboutImageThree} alt="About initiative visual 3" />
+            <img className="about-card-image" src={achievements} alt="About initiative visual 4" />
           </div>
           <p>
             The Faculty Boxing Initiative is positioned as the start of a new
@@ -312,7 +362,11 @@ function HomePage({ navigate }) {
         </article>
 
       
-          <article id="join-overview" className="content-card action-tile home-join-card">
+          <article
+            id="join-overview"
+            className="content-card action-tile home-join-card scroll-reveal"
+            data-reveal
+          >
             <p className="section-tag">Join Us!</p>
             <br/>
             

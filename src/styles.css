@@ -58,6 +58,25 @@ button {
   background-attachment: scroll;
 }
 
+.scroll-reveal {
+  --reveal-delay: 0ms;
+  opacity: 0;
+  transform: translateY(44px) scale(0.985);
+  filter: blur(10px);
+  transition:
+    opacity 700ms ease,
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 700ms ease;
+  transition-delay: var(--reveal-delay);
+  will-change: opacity, transform, filter;
+}
+
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+
 .top-frame {
   display: flex;
   align-items: center;
@@ -575,6 +594,20 @@ button {
 
 .join-hero {
   margin-top: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .scroll-reveal,
+  .scroll-reveal.is-visible {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
 }
 
 @media (max-width: 1080px) {
