@@ -226,10 +226,10 @@ button {
 .side-panel-close {
   min-height: 42px;
   padding: 0 16px;
-  border-radius: 999px;
-  background: rgba(255, 242, 242, 0.05);
+  border-radius:none;
+  background:none;
   color: var(--cream);
-  border: 1px solid var(--line);
+  border: none;
   transition:
     transform 180ms ease,
     border-color 180ms ease,

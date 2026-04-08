@@ -273,8 +273,9 @@ function App() {
             className="side-panel-close"
             onClick={() => navigate('home')}
             aria-label="Close announcements panel"
+            
           >
-            Close
+            X
           </button>
         </div>
 
