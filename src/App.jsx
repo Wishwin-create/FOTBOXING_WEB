@@ -300,7 +300,7 @@ function App() {
           </article>
 
           <article className="announcement-card">
-            <p className="mini-label">Upcoming Goal - Inter-Faculty</p>
+            <p className="mini-label">Upcoming Goal</p>
             <h4>Preparation for inter-faculty competition</h4>
             <p>
               Conditioning, sparring, and attendance will be prioritized over
