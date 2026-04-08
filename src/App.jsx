@@ -17,6 +17,7 @@ const pages = [
   { id: 'training', label: 'Training' },
   { id: 'pathway', label: 'Pathway' },
   { id: 'about', label: 'About' },
+  { id: 'announcements', label: 'Announcements' },
   { id: 'join', label: 'Join' },
 ]
 
@@ -87,6 +88,7 @@ function getInitialPage() {
 
 function App() {
   const [activePage, setActivePage] = useState(getInitialPage)
+  const [isAnnouncementsOpen, setIsAnnouncementsOpen] = useState(false)
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -96,6 +98,10 @@ function App() {
     window.addEventListener('hashchange', handleHashChange)
     return () => window.removeEventListener('hashchange', handleHashChange)
   }, [])
+
+  useEffect(() => {
+    setIsAnnouncementsOpen(activePage === 'announcements')
+  }, [activePage])
 
   useEffect(() => {
     if (activePage === 'home') {
@@ -144,87 +150,165 @@ function App() {
     return () => observer.disconnect()
   }, [])
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        navigate('home')
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
   const navigate = (pageId) => {
     window.location.hash = pageId
     setActivePage(pageId)
   }
 
   return (
-    <div className="site-shell" style={{ backgroundImage: `linear-gradient(rgba(6, 6, 6, 0.72), rgba(16, 6, 6, 0.86)), url(${backgroundImage})` }}>
-      <header className="top-frame">
-        <div className="brand-lockup">
-          <img className="brand-logo" src={logoImage} alt="UOC FOT Boxing logo" />
-          <div>
-            <p className="brand-kicker">Faculty of Technology</p>
-            <h1>UOC FOT Boxing</h1>
+    <div
+      className={isAnnouncementsOpen ? 'site-shell with-panel-open' : 'site-shell'}
+      style={{ backgroundImage: `linear-gradient(rgba(6, 6, 6, 0.72), rgba(16, 6, 6, 0.86)), url(${backgroundImage})` }}
+    >
+      <div className="page-stage">
+        <header className="top-frame">
+          <div className="brand-lockup">
+            <img className="brand-logo" src={logoImage} alt="UOC FOT Boxing logo" />
+            <div>
+              <p className="brand-kicker">Faculty of Technology</p>
+              <h1>UOC FOT Boxing</h1>
+            </div>
           </div>
+
+          <nav className="main-nav" aria-label="Primary">
+            {pages.map((page) => (
+              <button
+                key={page.id}
+                type="button"
+                className={
+                  activePage === page.id || (page.id === 'announcements' && isAnnouncementsOpen)
+                    ? 'nav-pill active'
+                    : 'nav-pill'
+                }
+                onClick={() => navigate(page.id)}
+              >
+                {page.label}
+              </button>
+            ))}
+          </nav>
+        </header>
+
+        <main>
+          <section className="hero-panel">
+            <div className="hero-copy scroll-reveal is-visible">
+              <p className="eyebrow">Faculty Boxing Initiative - Rise of the New Team</p>
+              <h2>
+                Building a boxing identity for the
+                <span> University of Colombo Faculty of Technology</span>
+              </h2>
+              <p className="hero-text">
+                Boxing is more than a sport. It is discipline, confidence, and
+                strength. This concept site is based on the FOT boxing proposal
+                and presents a front-end presence for students in Homagama who
+                want to train, grow, and represent the faculty with purpose.
+              </p>
+            </div>
+
+            <div className="hero-aside">
+              <article className="glass-card impact-card scroll-reveal is-visible">
+                <img className="mission-image" src={missionImage} alt="Mission training visual" />
+                <p className="mini-label">Mission</p>
+                <strong>Bring the spirit of boxing to the faculty and remove the barrier of distance.</strong>
+              </article>
+              <article className="glass-card coach-highlight-card scroll-reveal is-visible">
+                <p className="mini-label">LEGENDARY COACH</p>
+                <img className="coach-highlight-image" src={coachImage} alt="Legendary boxing coach" />
+               
+                <span>IBA 3-Star Boxing Coach, 7-time National Champion, and technical guide for the new team.</span>
+                <span>Our boxing program is guided by an IBA 3-Star Certified Coach with over
+                              15 years of experience in the sport.
+                              A 7-time National Champion and a
+                              proud representative of Sri Lanka at
+                              prestigious international events such as
+                              the Commonwealth Games and Asian
+                              Games, our coach brings world-class
+                              expertise, discipline, and passion to
+                              every training session.
+                              His deep technical knowledge and
+                              strategic insight inspire us to train
+                              harder, aim higher, and build a new
+                              generation of champions. 
+                              
+                              
+                              
+                              </span>
+
+              </article>
+            </div>
+          </section>
+
+          <PageTabs activePage={activePage} navigate={navigate} />
+        </main>
+      </div>
+
+      <div
+        className={isAnnouncementsOpen ? 'side-panel-backdrop is-visible' : 'side-panel-backdrop'}
+        aria-hidden={!isAnnouncementsOpen}
+      />
+
+      <aside
+        id="announcements-panel"
+        className={isAnnouncementsOpen ? 'side-panel is-open' : 'side-panel'}
+        aria-hidden={!isAnnouncementsOpen}
+        aria-label="Announcements panel"
+      >
+        <div className="side-panel-header">
+          <div>
+            <p className="section-tag">Annoucements</p>
+            <h3>Latest updates</h3>
+          </div>
+          <button
+            type="button"
+            className="side-panel-close"
+            onClick={() => navigate('home')}
+            aria-label="Close announcements panel"
+          >
+            Close
+          </button>
         </div>
 
-        <nav className="main-nav" aria-label="Primary">
-          {pages.map((page) => (
-            <button
-              key={page.id}
-              type="button"
-              className={activePage === page.id ? 'nav-pill active' : 'nav-pill'}
-              onClick={() => navigate(page.id)}
-            >
-              {page.label}
-            </button>
-          ))}
-        </nav>
-      </header>
+        <div className="side-panel-content">
+          
 
-      <main>
-        <section className="hero-panel">
-          <div className="hero-copy scroll-reveal is-visible">
-            <p className="eyebrow">Faculty Boxing Initiative - Rise of the New Team</p>
-            <h2>
-              Building a boxing identity for the
-              <span> University of Colombo Faculty of Technology</span>
-            </h2>
-            <p className="hero-text">
-              Boxing is more than a sport. It is discipline, confidence, and
-              strength. This concept site is based on the FOT boxing proposal
-              and presents a front-end presence for students in Homagama who
-              want to train, grow, and represent the faculty with purpose.
+          <article className="announcement-card">
+            <p className="mini-label">New Members</p>
+            <h4>Open invitation for FOT students</h4>
+            <p>
+              Beginners are welcome. If you want to join the boxing program,
+              reach out during training hours and speak with the team captains.
             </p>
-          </div>
+          </article>
 
-          <div className="hero-aside">
-            <article className="glass-card impact-card scroll-reveal is-visible">
-              <img className="mission-image" src={missionImage} alt="Mission training visual" />
-              <p className="mini-label">Mission</p>
-              <strong>Bring the spirit of boxing to the faculty and remove the barrier of distance.</strong>
-            </article>
-            <article className="glass-card coach-highlight-card scroll-reveal is-visible">
-              <p className="mini-label">LEGENDARY COACH</p>
-              <img className="coach-highlight-image" src={coachImage} alt="Legendary boxing coach" />
-             
-              <span>IBA 3-Star Boxing Coach, 7-time National Champion, and technical guide for the new team.</span>
-              <span>Our boxing program is guided by an IBA 3-Star Certified Coach with over
-                            15 years of experience in the sport.
-                            A 7-time National Champion and a
-                            proud representative of Sri Lanka at
-                            prestigious international events such as
-                            the Commonwealth Games and Asian
-                            Games, our coach brings world-class
-                            expertise, discipline, and passion to
-                            every training session.
-                            His deep technical knowledge and
-                            strategic insight inspire us to train
-                            harder, aim higher, and build a new
-                            generation of champions. 
-                            
-                            
-                            
-                            </span>
+          <article className="announcement-card">
+            <p className="mini-label">Upcoming Goal - Novices</p>
+            <h4>Preparation for Novices Tournament</h4>
+            <p>
+              Tuesday evening sessions will focus on skill development and sparring drills to
+               prepare for the upcoming Novices Tournament. All new athletes are encouraged to attend.
+            </p>
+          </article>
 
-            </article>
-          </div>
-        </section>
-
-        <PageTabs activePage={activePage} navigate={navigate} />
-      </main>
+          <article className="announcement-card">
+            <p className="mini-label">Upcoming Goal - Inter-Faculty</p>
+            <h4>Preparation for inter-faculty competition</h4>
+            <p>
+              Conditioning, sparring, and attendance will be prioritized over
+              the next few weeks as the team builds toward competition readiness.
+            </p>
+          </article>
+        </div>
+      </aside>
     </div>
   )
 }
@@ -277,7 +361,7 @@ function HomePage({ navigate }) {
           className="content-card feature-card training-preview-card scroll-reveal"
           data-reveal
         >
-          <p className="section-tag">Training Card</p>
+          <p className="section-tag">Training Schedule</p>
           <h4>Three training formats designed around access, repetition, and conditioning.</h4>
           <div className="training-preview-grid">
             {schedule.map((item, index) => (
